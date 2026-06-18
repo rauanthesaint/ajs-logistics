@@ -49,8 +49,6 @@ type AccordionItemProps = {
 };
 
 export function AccordionItem({ value, children }: AccordionItemProps) {
-  const { selected } = useAccordion();
-  const isSelected = selected === value;
   return (
     <AccordionItemContext.Provider value={{ value }}>
       <div className={styles.AccordionItem}>{children}</div>
