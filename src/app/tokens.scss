@@ -1,0 +1,69 @@
+@use "sass:math";
+
+@function pow($base, $exp) {
+  $result: 1;
+  @if $exp > 0 {
+    @for $i from 1 through $exp {
+      $result: $result * $base;
+    }
+  } @else if $exp < 0 {
+    @for $i from $exp through -1 {
+      $result: math.div($result, $base);
+    }
+  }
+  @return $result;
+}
+
+$type-scale-steps: (
+  "xs": -2,
+  "sm": -1,
+  "md": 0,
+  "lg": 1,
+  "xl": 2,
+  "2xl": 3,
+  "3xl": 4,
+) !default;
+
+@mixin type-scale($base: 16, $ratio: 1.25, $steps: $type-scale-steps) {
+  @each $name, $step in $steps {
+    $size: $base * pow($ratio, $step);
+    --font-size-#{$name}: #{math.div(math.round($size * 100), 100)}px;
+  }
+}
+
+:root {
+  --color-neutral--50: #f9f9fb;
+  --color-neutral--100: #f2f2f8;
+  --color-neutral--200: #e5e4ee;
+  --color-neutral--300: #cecede;
+  --color-neutral--400: #8482a2;
+  --color-neutral--500: #6b6986;
+  --color-neutral--600: #4e4c64;
+  --color-neutral--700: #3a3850;
+  --color-neutral--800: #242237;
+  --color-neutral--900: #161326;
+  --color-neutral--950: #090514;
+
+  --color-accent-50: #f3f2ff;
+  --color-accent-100: #e9e7ff;
+  --color-accent-200: #d5d2ff;
+  --color-accent-300: #b7aeff;
+  --color-accent-400: #9380ff;
+  --color-accent-500: #714dff;
+  --color-accent-600: #6b35ff;
+  --color-accent-700: #5316eb;
+  --color-accent-800: #4612c5;
+  --color-accent-900: #3b11a1;
+  --color-accent-950: #21076e;
+
+  --background: var(--color-neutral--50);
+  --background-secondary: var(--color-neutral--100);
+  --background-tertiary: var(--color-neutral--200);
+  --foreground: var(--color-neutral--950);
+  --foreground-secondary: var(--color-neutral--500);
+
+  --interactive: var(--color-accent-600);
+  --interactive-foreground: var(--color-accent-50);
+
+  @include type-scale(16, 1.2);
+}

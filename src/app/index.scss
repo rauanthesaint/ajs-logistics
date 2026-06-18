@@ -1,0 +1,86 @@
+@use "./tokens.scss";
+@import url("https://fonts.googleapis.com/css2?family=Geist:ital,wght@0,100..900;1,100..900&display=swap");
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+
+  font-family: "Geist", sans-serif;
+}
+
+body {
+  overflow-x: hidden;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-size: inherit;
+  background: none;
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+}
+
+svg {
+  flex-shrink: 0;
+}
+
+// Typography
+.heading {
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  &:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+
+  &.sm {
+    font-size: var(--font-size-md);
+    &:not(:last-child) {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  &.lg {
+    font-size: var(--font-size-xl);
+  }
+  &.xl {
+    font-size: var(--font-size-2xl);
+    &:not(:last-child) {
+      margin-bottom: 1.25rem;
+    }
+  }
+}
+
+.display {
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  max-width: 720px;
+
+  &:not(:last-child) {
+    margin-bottom: 1.25rem;
+  }
+}
+
+p {
+  max-width: 560px;
+  &:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+}
+
+.muted {
+  color: var(--foreground-secondary);
+}

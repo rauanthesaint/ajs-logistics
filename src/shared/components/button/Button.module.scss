@@ -1,0 +1,21 @@
+@use "sass:math";
+
+.Button {
+  $height: 2.5rem;
+  height: $height;
+  border-radius: math.div($height, 2);
+  padding: 0 0.75rem;
+
+  background: var(--interactive);
+  color: var(--interactive-foreground);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+
+  span {
+    margin: 0 0.5rem;
+    font-weight: 500;
+  }
+}

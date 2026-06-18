@@ -1,0 +1,29 @@
+.Header {
+  .container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 4rem;
+  }
+}
+
+.Footer {
+  // background: var(--foreground);
+  // color: var(--background);
+  .container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  padding: 1rem 0;
+}
+
+.Navigation {
+  display: flex;
+  gap: 1rem;
+  .NavigationItem {
+    display: flex;
+    align-items: center;
+    gap: 0.325rem;
+  }
+}

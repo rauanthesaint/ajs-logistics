@@ -1,0 +1,110 @@
+.HeroSection {
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
+
+.ServicesSection {
+  background: var(--background-secondary);
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+    .card {
+      background: var(--background);
+      border-radius: 20px;
+      padding: 0.25rem;
+      .cover {
+        width: 100%;
+        aspect-ratio: 2;
+        border-radius: 1rem;
+      }
+      .details {
+        padding: 0.75rem;
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+}
+
+.QuestionsSection {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    gap: 1rem;
+  }
+}
+
+.ReasonsSection {
+  background: var(--background-secondary);
+  .container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    gap: 1rem;
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .image {
+      min-height: 16rem;
+    }
+  }
+
+  .card {
+    $size: 1.25rem;
+    $spacing: 0.5rem;
+    .header {
+      display: flex;
+      align-items: center;
+      gap: $spacing;
+      margin-bottom: 0.5rem;
+
+      svg {
+        width: $size;
+        height: $size;
+      }
+    }
+    .description {
+      margin-left: $size + $spacing;
+    }
+  }
+}
+
+.CasesSection {
+  .content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+    & > * {
+      height: 16rem;
+    }
+
+    .mainCase {
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .content .mainCase {
+      grid-column: span 1;
+    }
+  }
+}
+
+.RoutesSection {
+  .container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+}
