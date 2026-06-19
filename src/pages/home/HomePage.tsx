@@ -17,7 +17,7 @@ import {
   ImageIcon,
   Shield01Icon,
 } from "@hugeicons/core-free-icons";
-import { Link } from "react-router-dom";
+import { Globe } from "@/shared/components/globe";
 
 type Service = {
   title: string;
@@ -28,6 +28,66 @@ type Question = {
   question: string;
   answer: string;
 };
+
+const countries: string[] = [
+  "Bosnia and Herz.",
+  "Macedonia",
+  "Czechia",
+  "Azerbaijan",
+  "Armenia",
+  "Belarus",
+  "Kazakhstan",
+  "Kyrgyzstan",
+  "Russia",
+  "Tajikistan",
+  "Turkmenistan",
+  "Uzbekistan",
+  "Afghanistan",
+  "China",
+  "Albania",
+  "Andorra",
+  "Austria",
+  "Belgium",
+  "Bosnia and Herzegovina",
+  "Bulgaria",
+  "Croatia",
+  "Cyprus",
+  "Czech Republic",
+  "Denmark",
+  "Estonia",
+  "Finland",
+  "France",
+  "Germany",
+  "Greece",
+  "Hungary",
+  "Turkey",
+  "Ireland",
+  "Italy",
+  "Kosovo",
+  "Latvia",
+  "Liechtenstein",
+  "Lithuania",
+  "Luxembourg",
+  "Malta",
+  "Moldova",
+  "Monaco",
+  "Montenegro",
+  "Netherlands",
+  "North Macedonia",
+  "Norway",
+  "Poland",
+  "Portugal",
+  "Romania",
+  "Serbia",
+  "Slovakia",
+  "Slovenia",
+  "Spain",
+  "Sweden",
+  "Switzerland",
+  "Ukraine",
+  "United Kingdom",
+  "Vatican City",
+];
 
 const services: Service[] = [
   {
@@ -104,11 +164,12 @@ const reasons: Reason[] = [
 export function HomePage() {
   return (
     <main>
-      <Section className={styles.HeroSection}>
+      <Section className={styles.Hero}>
         <Container className={styles.container}>
           <div>
             <h1 className="display">
-              Международные грузоперевозки по&nbsp;СНГ, Европе и&nbsp;Азии
+              Международные грузоперевозки <br />
+              по&nbsp;СНГ, Европе и&nbsp;Азии
             </h1>
             <p className="muted">
               Авто, авиа и&nbsp;железнодорожные перевозки для бизнеса.
@@ -117,19 +178,34 @@ export function HomePage() {
             </p>
           </div>
 
-          <div>
-            <Button asChild>
-              <Link to={"https://wa.me/+77712434109"} target="_blank">
-                <span>Получить рассчет</span>
-              </Link>
-            </Button>
-          </div>
+          <Button>
+            {/* <Link to={"https://wa.me/+77712434109"} target="_blank"> */}
+            <span>Получить рассчет</span>
+            {/* </Link> */}
+          </Button>
+
+          <Globe
+            className={styles.globe}
+            options={{
+              angle: [-56.9, -13.2],
+              mode: "3d",
+              highlights: countries,
+            }}
+          />
         </Container>
       </Section>
 
       <Section className={styles.ServicesSection}>
         <Container className={styles.container}>
-          <h2 className="heading xl">Направления перевозок</h2>
+          <div>
+            <h2 className="heading xl">Направления перевозок</h2>
+            <p className="muted">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex,
+              nihil? Esse totam iste ullam. Tempora velit expedita eligendi
+              earum ad, quia suscipit sequi distinctio corporis porro omnis ab
+              non quod?
+            </p>
+          </div>
           <div className={styles.content}>
             {services.map(({ title }, index) => (
               <article className={styles.card} key={index}>

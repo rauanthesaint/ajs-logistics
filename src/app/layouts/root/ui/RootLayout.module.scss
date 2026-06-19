@@ -1,9 +1,13 @@
+.RootLayout {
+  overflow-x: hidden;
+}
+
 .Header {
   .container {
     display: flex;
     align-items: center;
     gap: 2rem;
-    height: 4rem;
+    height: var(--header-height);
   }
 }
 
@@ -18,12 +22,11 @@
   padding: 1rem 0;
 }
 
+.Logo {
+  height: 20px;
+}
+
 .Navigation {
   display: flex;
   gap: 1rem;
-  .NavigationItem {
-    display: flex;
-    align-items: center;
-    gap: 0.325rem;
-  }
 }

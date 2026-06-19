@@ -32,38 +32,40 @@ $type-scale-steps: (
 }
 
 :root {
-  --color-neutral--50: #f9f9fb;
-  --color-neutral--100: #f2f2f8;
-  --color-neutral--200: #e5e4ee;
-  --color-neutral--300: #cecede;
-  --color-neutral--400: #8482a2;
-  --color-neutral--500: #6b6986;
-  --color-neutral--600: #4e4c64;
-  --color-neutral--700: #3a3850;
-  --color-neutral--800: #242237;
-  --color-neutral--900: #161326;
-  --color-neutral--950: #090514;
+  --color-neutral-50: #fbfbf8;
+  --color-neutral-100: #f6f6f3;
+  --color-neutral-200: #eae4e1;
+  --color-neutral-300: #dbd2cc;
+  --color-neutral-400: #b2a094;
+  --color-neutral-500: #846f60;
+  --color-neutral-600: #605445;
+  --color-neutral-700: #4c4034;
+  --color-neutral-800: #2e221f;
+  --color-neutral-900: #211812;
+  --color-neutral-950: #0f0906;
 
-  --color-accent-50: #f3f2ff;
-  --color-accent-100: #e9e7ff;
-  --color-accent-200: #d5d2ff;
-  --color-accent-300: #b7aeff;
-  --color-accent-400: #9380ff;
-  --color-accent-500: #714dff;
-  --color-accent-600: #6b35ff;
-  --color-accent-700: #5316eb;
-  --color-accent-800: #4612c5;
-  --color-accent-900: #3b11a1;
-  --color-accent-950: #21076e;
+  --color-accent-50: #f2fbf5;
+  --color-accent-100: #e2f6e8;
+  --color-accent-200: #c6ecd3;
+  --color-accent-300: #99dcb0;
+  --color-accent-400: #65c385;
+  --color-accent-500: #3a995b;
+  --color-accent-600: #30894f;
+  --color-accent-700: #286d40;
+  --color-accent-800: #245736;
+  --color-accent-900: #1f482e;
+  --color-accent-950: #0c2717;
 
-  --background: var(--color-neutral--50);
-  --background-secondary: var(--color-neutral--100);
-  --background-tertiary: var(--color-neutral--200);
-  --foreground: var(--color-neutral--950);
-  --foreground-secondary: var(--color-neutral--500);
+  --background: var(--color-neutral-50);
+  --background-secondary: var(--color-neutral-100);
+  --background-tertiary: var(--color-neutral-200);
+  --foreground: var(--color-neutral-950);
+  --foreground-secondary: var(--color-neutral-500);
 
   --interactive: var(--color-accent-600);
   --interactive-foreground: var(--color-accent-50);
+
+  --header-height: 4rem;
 
   @include type-scale(16, 1.2);
 }
