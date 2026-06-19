@@ -1,21 +1,61 @@
 @use "sass:math";
 
 .Button {
-  $height: 2.5rem;
-  height: $height;
-  border-radius: math.div($height, 2);
-  padding: 0 0.75rem;
-
-  background: var(--interactive);
-  color: var(--interactive-foreground);
-
   display: flex;
   align-items: center;
   justify-content: center;
-  width: max-content;
 
-  span {
-    margin: 0 0.5rem;
-    font-weight: 500;
+  svg {
+    $size: 20px;
+    width: $size;
+    height: $size;
+  }
+}
+
+.Button {
+  &.icon {
+    padding: unset;
+    span {
+      margin: unset;
+    }
+  }
+
+  &.md {
+    $height: 2.5rem;
+    height: $height;
+    border-radius: math.div($height, 2);
+    padding: 0 0.75rem;
+    span {
+      margin: 0 0.5rem;
+      font-weight: 500;
+    }
+    &.icon {
+      width: $height;
+    }
+  }
+  &.sm {
+    $height: 2rem;
+    height: $height;
+    border-radius: math.div($height, 2);
+    padding: 0 0.5rem;
+    span {
+      font-size: var(--font-size-sm);
+      font-weight: 400;
+      margin: 0 0.325rem;
+    }
+    &.icon {
+      width: $height;
+    }
+  }
+}
+
+.Button {
+  &.default {
+    background: var(--interactive);
+    color: var(--interactive-foreground);
+  }
+  &.ghost {
+    background: transparent;
+    color: var(--foreground-secondary);
   }
 }

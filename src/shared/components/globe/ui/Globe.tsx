@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useGlobe, type GlobeOptions } from "../model";
+import { GlobeContext, useGlobe, VIEWBOX, type GlobeOptions } from "../model";
 
 type GlobeProps = {
   options?: GlobeOptions;
@@ -7,25 +7,24 @@ type GlobeProps = {
   children?: ReactNode;
 };
 
-export default function Globe({
-  className,
-  children,
-  options = {},
-}: GlobeProps) {
-  const ref = useGlobe(options);
+export function Globe({ className, children, options = {} }: GlobeProps) {
+  const { ref, store } = useGlobe(options);
 
   return (
-    <svg
-      ref={ref}
-      style={{
-        aspectRatio: 1,
-        overflow: "visible",
-        minWidth: 400,
-      }}
-      className={className}
-    >
-      <g data-globe-root />
-      {children}
-    </svg>
+    <GlobeContext.Provider value={store}>
+      <svg
+        ref={ref}
+        viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`}
+        className={className}
+        style={{
+          aspectRatio: 1,
+          overflow: "visible",
+          minWidth: 400,
+        }}
+      >
+        <g data-globe-root />
+        {children}
+      </svg>
+    </GlobeContext.Provider>
   );
 }

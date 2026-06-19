@@ -12,11 +12,23 @@ import {
 import { feature, mesh } from "topojson-client";
 import { useGetTopology } from "../api";
 import type { GlobeOptions } from "./types";
+import { createProjectionStore, type ProjectionSnapshot } from "./store";
+
+// CONSTANTS
+export const VIEWBOX = 1000;
+const RADIUS = VIEWBOX / 2;
 
 type CountryProperties = { name: string };
 type CountryFeature = GeoJSON.Feature<GeoJSON.Geometry, CountryProperties>;
 
-type UseGlobeReturn = Ref<SVGSVGElement>;
+type UseGlobeReturn = {
+  ref: Ref<SVGSVGElement>;
+  store: {
+    getSnapshot: () => ProjectionSnapshot;
+    setProjection: (projection: GeoProjection | null) => void;
+    subscribe: (listener: () => void) => () => void;
+  };
+};
 
 export function useGlobe({
   angle = [0, 0],
@@ -45,6 +57,8 @@ export function useGlobe({
   colorsRef.current = colors;
   highlightsRef.current = highlights;
 
+  const storeRef = useRef(createProjectionStore());
+
   const { data: world } = useGetTopology();
   const shadowId = useId();
   const lightId = useId();
@@ -68,9 +82,8 @@ export function useGlobe({
     if (!geometry || !node) return;
     if (typeof ResizeObserver === "undefined") return;
 
-    function draw(diameter: number) {
+    function draw() {
       if (!node || !geometry) return;
-      const radius = diameter / 2;
       const root = select(node).select<SVGGElement>("g[data-globe-root]");
       root.selectAll("*").remove();
 
@@ -79,9 +92,9 @@ export function useGlobe({
       const currentHighlights = highlightsRef.current;
 
       const projection = geoOrthographic()
-        .scale(radius)
+        .scale(RADIUS)
         .rotate(currentAngle)
-        .translate([radius, radius]);
+        .translate([RADIUS, RADIUS]);
       projectionRef.current = projection;
 
       const path = geoPath().projection(projection);
@@ -92,21 +105,21 @@ export function useGlobe({
 
       if (mode === "3d") {
         const filter = defs.append("filter").attr("id", shadowId);
-        filter.append("feGaussianBlur").attr("stdDeviation", radius * 0.08);
+        filter.append("feGaussianBlur").attr("stdDeviation", RADIUS * 0.08);
         root
           .append("circle")
-          .attr("cx", radius)
-          .attr("cy", radius)
-          .attr("r", radius * 0.9)
+          .attr("cx", RADIUS)
+          .attr("cy", RADIUS)
+          .attr("r", RADIUS * 0.9)
           .attr("fill", "var(--color-neutral-500)")
           .attr("filter", `url(#${shadowId})`);
       }
 
       root
         .append("circle")
-        .attr("cx", radius)
-        .attr("cy", radius)
-        .attr("r", radius)
+        .attr("cx", RADIUS)
+        .attr("cy", RADIUS)
+        .attr("r", RADIUS)
         .attr("fill", currentColors.sphere ?? "#D9E3D7");
 
       const g = root.append("g");
@@ -181,20 +194,23 @@ export function useGlobe({
           .attr("stop-opacity", 0.6);
         root
           .append("circle")
-          .attr("cx", radius)
-          .attr("cy", radius)
-          .attr("r", radius)
+          .attr("cx", RADIUS)
+          .attr("cy", RADIUS)
+          .attr("r", RADIUS)
           .attr("fill", `url(#${lightId})`);
       }
+
+      storeRef.current.setProjection(projection);
     }
 
-    const observer = new ResizeObserver(([entry]) => {
-      const diameter = entry.contentRect.width;
-      if (diameter > 0) draw(diameter);
-    });
-    observer.observe(node);
+    draw();
+    // const observer = new ResizeObserver(([entry]) => {
+    //   const diameter = entry.contentRect.width;
+    //   if (diameter > 0) draw(diameter);
+    // });
+    // observer.observe(node);
 
-    return () => observer.disconnect();
+    // return () => observer.disconnect();
   }, [geometry, mode, shadowId, lightId]);
 
   // Вращение: легкий апдейт без пересборки DOM
@@ -208,6 +224,8 @@ export function useGlobe({
     select(node)
       .selectAll<SVGPathElement, GeoPermissibleObjects>("path")
       .attr("d", path);
+
+    storeRef.current.setProjection(projection);
   }, [angle]);
 
   useEffect(() => {
@@ -248,5 +266,5 @@ export function useGlobe({
     geometry,
   ]);
 
-  return svgRef;
+  return { ref: svgRef, store: storeRef.current };
 }

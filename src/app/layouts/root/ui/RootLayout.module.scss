@@ -4,10 +4,17 @@
 
 .Header {
   .container {
+    height: var(--header-height);
+
     display: flex;
     align-items: center;
-    gap: 2rem;
-    height: var(--header-height);
+    justify-content: space-between;
+
+    .block {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
   }
 }
 
@@ -24,6 +31,7 @@
 
 .Logo {
   height: 20px;
+  margin-right: 1rem;
 }
 
 .Navigation {

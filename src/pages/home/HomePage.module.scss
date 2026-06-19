@@ -3,6 +3,10 @@
 .Hero {
   height: calc(100vh - var(--header-height));
 
+  .block {
+    margin-bottom: 2.5rem; // indev
+  }
+
   .container {
     height: 100%;
     position: relative;
@@ -31,9 +35,12 @@
 }
 
 .ServicesSection {
-  background: color-mix(in srgb, var(--background-secondary) 80%, transparent);
-  // background: var(--background-secondary);
-  backdrop-filter: blur(2rem);
+  // background: color-mix(in srgb, var(--background-secondary) 80%, transparent);
+  // backdrop-filter: blur(2rem);
+  @media screen and (min-width: 769px) {
+    border-radius: 3rem;
+  }
+  background: var(--background-secondary);
 
   // position: relative;
   // overflow: hidden;

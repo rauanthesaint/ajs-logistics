@@ -1,6 +1,6 @@
 import type { GeoProjection } from "d3";
 
-type ProjectionSnapshot = {
+export type ProjectionSnapshot = {
   projection: GeoProjection | null;
 };
 
@@ -20,7 +20,9 @@ export function createProjectionStore() {
 
   function subscribe(listener: () => void) {
     listeners.add(listener);
-    return () => listeners.delete(listener);
+    return () => {
+      listeners.delete(listener);
+    };
   }
 
   return { getSnapshot, setProjection, subscribe };
