@@ -11,10 +11,9 @@ import {
 } from "d3";
 import { feature, mesh } from "topojson-client";
 import { useGetTopology } from "../api";
-import type { GlobeOptions } from "./types";
+import { isMotionAngle, type GlobeOptions } from "./types";
 import { createProjectionStore, type ProjectionSnapshot } from "./store";
 
-// CONSTANTS
 export const VIEWBOX = 1000;
 const RADIUS = VIEWBOX / 2;
 
@@ -33,7 +32,6 @@ type UseGlobeReturn = {
 export function useGlobe({
   angle = [0, 0],
   colors = {},
-  mode = "2d",
   highlights = [],
 }: GlobeOptions): UseGlobeReturn {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -48,14 +46,20 @@ export function useGlobe({
       null,
     );
 
-  // refs всегда хранят актуальные пропсы, чтобы ResizeObserver
-  // не использовал устаревшие значения из замыкания
   const angleRef = useRef(angle);
   const colorsRef = useRef(colors);
   const highlightsRef = useRef(highlights);
   angleRef.current = angle;
   colorsRef.current = colors;
   highlightsRef.current = highlights;
+
+  function readCurrentAngle(): [number, number] {
+    const a = angleRef.current;
+    if (isMotionAngle(a)) {
+      return [a.lambda.get(), a.phi.get()];
+    }
+    return [a[0], a[1]];
+  }
 
   const storeRef = useRef(createProjectionStore());
 
@@ -76,7 +80,7 @@ export function useGlobe({
     return { countries, borders };
   }, [world]);
 
-  // Построение структуры: пересобирается на смену world, mode, и при resize
+  // Построение структуры: пересобирается на смену world и при resize
   useEffect(() => {
     const node = svgRef.current;
     if (!geometry || !node) return;
@@ -87,13 +91,12 @@ export function useGlobe({
       const root = select(node).select<SVGGElement>("g[data-globe-root]");
       root.selectAll("*").remove();
 
-      const currentAngle = angleRef.current;
       const currentColors = colorsRef.current;
       const currentHighlights = highlightsRef.current;
 
       const projection = geoOrthographic()
         .scale(RADIUS)
-        .rotate(currentAngle)
+        .rotate(readCurrentAngle())
         .translate([RADIUS, RADIUS]);
       projectionRef.current = projection;
 
@@ -103,17 +106,15 @@ export function useGlobe({
       const graticule = geoGraticule();
       const defs = root.append("defs");
 
-      if (mode === "3d") {
-        const filter = defs.append("filter").attr("id", shadowId);
-        filter.append("feGaussianBlur").attr("stdDeviation", RADIUS * 0.08);
-        root
-          .append("circle")
-          .attr("cx", RADIUS)
-          .attr("cy", RADIUS)
-          .attr("r", RADIUS * 0.9)
-          .attr("fill", "var(--color-neutral-500)")
-          .attr("filter", `url(#${shadowId})`);
-      }
+      const filter = defs.append("filter").attr("id", shadowId);
+      filter.append("feGaussianBlur").attr("stdDeviation", RADIUS * 0.08);
+      root
+        .append("circle")
+        .attr("cx", RADIUS)
+        .attr("cy", RADIUS)
+        .attr("r", RADIUS * 0.9)
+        .attr("fill", "var(--color-neutral-500)")
+        .attr("filter", `url(#${shadowId})`);
 
       root
         .append("circle")
@@ -171,63 +172,91 @@ export function useGlobe({
         .attr("d", path);
       highlightBordersRef.current = highlightBorders;
 
-      if (mode === "3d") {
-        const gradient = defs
-          .append("radialGradient")
-          .attr("id", lightId)
-          .attr("cx", "10%")
-          .attr("cy", "10%")
-          .attr("r", "100%");
-        gradient
-          .append("stop")
-          .attr("offset", "0%")
-          .attr("stop-color", "var(--color-neutral-50)")
-          .attr("stop-opacity", 0.4);
-        gradient
-          .append("stop")
-          .attr("offset", "50%")
-          .attr("stop-color", "transparent");
-        gradient
-          .append("stop")
-          .attr("offset", "100%")
-          .attr("stop-color", "var(--color-neutral-950)")
-          .attr("stop-opacity", 0.6);
-        root
-          .append("circle")
-          .attr("cx", RADIUS)
-          .attr("cy", RADIUS)
-          .attr("r", RADIUS)
-          .attr("fill", `url(#${lightId})`);
-      }
+      const gradient = defs
+        .append("radialGradient")
+        .attr("id", lightId)
+        .attr("cx", "10%")
+        .attr("cy", "10%")
+        .attr("r", "100%");
+      gradient
+        .append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", "var(--color-neutral-50)")
+        .attr("stop-opacity", 0.4);
+      gradient
+        .append("stop")
+        .attr("offset", "50%")
+        .attr("stop-color", "transparent");
+      gradient
+        .append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", "var(--color-neutral-950)")
+        .attr("stop-opacity", 0.6);
+      root
+        .append("circle")
+        .attr("cx", RADIUS)
+        .attr("cy", RADIUS)
+        .attr("r", RADIUS)
+        .attr("fill", `url(#${lightId})`);
 
       storeRef.current.setProjection(projection);
     }
 
     draw();
-    // const observer = new ResizeObserver(([entry]) => {
-    //   const diameter = entry.contentRect.width;
-    //   if (diameter > 0) draw(diameter);
-    // });
-    // observer.observe(node);
+  }, [geometry, shadowId, lightId]);
 
-    // return () => observer.disconnect();
-  }, [geometry, mode, shadowId, lightId]);
-
-  // Вращение: легкий апдейт без пересборки DOM
+  // Вращение через статичный tuple, обычный React эффект
   useEffect(() => {
+    if (isMotionAngle(angle)) return;
+
+    const staticAngle = angle; // const сохраняет узкий тип
+
     const projection = projectionRef.current;
     const path = pathRef.current;
     const node = svgRef.current;
     if (!projection || !path || !node) return;
 
-    projection.rotate(angle);
+    projection.rotate(staticAngle);
     select(node)
       .selectAll<SVGPathElement, GeoPermissibleObjects>("path")
       .attr("d", path);
 
     storeRef.current.setProjection(projection);
-  }, [angle]);
+  }, [isMotionAngle(angle) ? null : angle]);
 
+  // Вращение через motion values, подписка мимо React re-render
+  useEffect(() => {
+    if (!isMotionAngle(angle)) return;
+
+    const motionAngle = angle; // const сохраняет узкий тип внутри вложенной функции
+
+    function updateRotation() {
+      const projection = projectionRef.current;
+      const path = pathRef.current;
+      const node = svgRef.current;
+      if (!projection || !path || !node) return;
+
+      projection.rotate([motionAngle.lambda.get(), motionAngle.phi.get()]);
+      select(node)
+        .selectAll<SVGPathElement, GeoPermissibleObjects>("path")
+        .attr("d", path);
+
+      storeRef.current.setProjection(projection);
+    }
+
+    const unsubLambda = motionAngle.lambda.on("change", updateRotation);
+    const unsubPhi = motionAngle.phi.on("change", updateRotation);
+
+    return () => {
+      unsubLambda();
+      unsubPhi();
+    };
+  }, [
+    isMotionAngle(angle) ? angle.lambda : null,
+    isMotionAngle(angle) ? angle.phi : null,
+  ]);
+
+  // Подсветка стран
   useEffect(() => {
     const countries = countriesRef.current;
     const path = pathRef.current;

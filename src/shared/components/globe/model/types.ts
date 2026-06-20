@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { MotionValue } from "motion/react";
 
 const PositionSchema = z.tuple([z.number(), z.number()]);
 const ArcIndexRing = z.array(z.number());
@@ -52,8 +53,13 @@ export const TopologySchema = z.object({
 
 export type Topology = z.infer<typeof TopologySchema>;
 
+export type GlobeAngle =
+  | [number, number]
+  | [number, number, number]
+  | { lambda: MotionValue<number>; phi: MotionValue<number> };
+
 export type GlobeOptions = {
-  angle?: [number, number] | [number, number, number];
+  angle?: GlobeAngle;
   colors?: Partial<{
     sphere: string | "none";
     graticule: string | "none";
@@ -65,3 +71,9 @@ export type GlobeOptions = {
   mode?: "3d" | "2d";
   highlights?: string[];
 };
+
+export function isMotionAngle(
+  angle: GlobeAngle,
+): angle is { lambda: MotionValue<number>; phi: MotionValue<number> } {
+  return !Array.isArray(angle);
+}
